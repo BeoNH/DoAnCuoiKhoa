@@ -14,7 +14,6 @@ public class Player : Singleton<Player>
     public override void Awake() 
     {
         MakeSingleton(false);
-        _bullet =10;
     }
 
     public override void Start()
@@ -34,7 +33,7 @@ public class Player : Singleton<Player>
 
         Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
         _viewFinderClone.transform.position = new Vector3(mousePos.x, mousePos.y, 0f);  
-
+        
         if(Input.GetMouseButtonDown(0))
         {
             this.shoot(mousePos); 
@@ -50,6 +49,7 @@ public class Player : Singleton<Player>
 
         Vector3 shootingDir = _cam.transform.position - mousePos;
         shootingDir.Normalize();
+
         //lay ra mang[] toan bo vat bi tia Raycast chieu trung duoi dang physic2D
         RaycastHit2D[] hits = Physics2D.RaycastAll(mousePos, shootingDir, 0.1f);
 
