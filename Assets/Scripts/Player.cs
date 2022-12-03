@@ -14,7 +14,7 @@ public class Player : Singleton<Player>
     public override void Awake() 
     {
         MakeSingleton(false);
-        _bullet =10;
+        _bullet =100;
     }
 
     public override void Start()
