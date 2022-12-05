@@ -17,6 +17,11 @@ public class Enemy : MonoBehaviour
 
     private void Update() 
     {
+        this.CheckTime();
+    }
+
+    private void CheckTime()
+    {
         if(Time.timeScale >=1)
         {
             transform.Translate(Vector3.down * Time.deltaTime * moveSpeed, Space.World);
@@ -33,5 +38,6 @@ public class Enemy : MonoBehaviour
         _isDead=  true;
         Instantiate(deadPrefab, transform.position, Quaternion.identity);
         Destroy(gameObject);
+        GameManager.Ins.Killed++;
     }
 }

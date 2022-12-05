@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 812033691964245547}
   - component: {fileID: 7347983472159487980}
   - component: {fileID: 5551682558855500427}
+  - component: {fileID: -3279609235561338288}
   m_Layer: 0
   m_Name: Alien-4
   m_TagString: Untagged
@@ -123,3 +124,17 @@ CapsuleCollider2D:
   m_Offset: {x: -0.030107714, y: -0.46092227}
   m_Size: {x: 2.4325192, y: 4.5774236}
   m_Direction: 0
+--- !u!114 &-3279609235561338288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113632764141011622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff82bd3cb51a5a428bf813196d59d30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 8
+  deadPrefab: {fileID: 149344, guid: 617378de28fbaa64c96485d5b0d9169b, type: 3}

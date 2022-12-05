@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : Singleton<Player>
 {
+    
     public GameObject viewFiderPb;
     private int _bullet;
     private Camera _cam;
@@ -14,10 +15,20 @@ public class Player : Singleton<Player>
     public override void Awake() 
     {
         MakeSingleton(false);
-        _bullet =100;
     }
 
     public override void Start()
+    {
+        this.checkFinderClone();
+    }
+    
+    private void Update() 
+    {
+
+        this.ShootPos();
+    }
+
+    private void checkFinderClone()
     {
         if(!GameManager.Ins) return;
 
@@ -27,8 +38,8 @@ public class Player : Singleton<Player>
 
         _viewFinderClone = Instantiate(viewFiderPb, new Vector3(100,100,0f), Quaternion.identity );
     }
-    
-    private void Update() 
+
+    private void ShootPos()
     {
         if (!_cam) return;
 
@@ -39,7 +50,6 @@ public class Player : Singleton<Player>
         {
             this.shoot(mousePos); 
         }
-        
     }
 
     private void shoot(Vector3 mousePos)
@@ -50,6 +60,7 @@ public class Player : Singleton<Player>
 
         Vector3 shootingDir = _cam.transform.position - mousePos;
         shootingDir.Normalize();
+        
         //lay ra mang[] toan bo vat bi tia Raycast chieu trung duoi dang physic2D
         RaycastHit2D[] hits = Physics2D.RaycastAll(mousePos, shootingDir, 0.1f);
 
@@ -60,8 +71,6 @@ public class Player : Singleton<Player>
 
             if (!hitted.collider) continue;
            
-            Debug.Log(hitted.collider.gameObject.name);
-
             var enemy = hitted.collider.GetComponent<Enemy>();
             if(enemy)
             {

@@ -27,10 +27,10 @@ public class SlowController : Singleton<SlowController>
         // }
     }
 
-    // public void DoSlowmotion()
-    // {
-    //     Time.timeScale = slowdownFactor;
-    //     Time.fixedDeltaTime = Time.timeScale * .02f;
-    //     GameManager.Ins.IsEnemiesSlowed = true;
-    // }
+    public void DoSlowmotion()
+    {
+        Time.timeScale = slowdownFactor;
+        Time.fixedDeltaTime = Time.timeScale * .02f;
+        //GameManager.Ins.IsEnemiesSlowed = true;
+    }
 }
