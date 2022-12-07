@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
@@ -9,24 +10,24 @@ public class GameManager : Singleton<GameManager>
     public  bool isOnMobile;
 
     [SerializeField] private  Enemy[] enemiPbs;
-    [SerializeField] private  int waveLevel;
-    [SerializeField] private  int enemyLevel;
-    [SerializeField] private  int enemyUpLevel;
-    [SerializeField] private  int bulletExtra;
-    [SerializeField] private  float timeDownLevel;
+    [SerializeField] private  int waveLevel = 3;
+    [SerializeField] private  int enemyLevel = 3;
+    [SerializeField] private  int enemyUpLevel = 2;
+    [SerializeField] private  int bulletExtra = 1;
+    [SerializeField] private  float timeDownLevel = 0.0001f;
 
     private List<Enemy> _enemySpawned;
     private int _killed;
     private int _level =1;
     private int _Wave = 1;
-    private int socre;
+    private int _score;
 
     private bool _isSlowed;
     private bool _isBeginSlow;
 
     public int Killed { get => _killed; set => _killed = value; }
     public bool IsSlowed { get => _isSlowed; set => _isSlowed = value; }
-    public int Socre { get => socre; }
+    public int Socre { get => _score; }
 
     public override void Awake()
     {
@@ -36,11 +37,18 @@ public class GameManager : Singleton<GameManager>
 
     public override void Start()
     {
-        this.Spawn();
+        state = GameState.Starting;
+
+        if(AudioController.Ins)
+        {
+            AudioController.Ins.PlayBackgroundMusic();
+        }
     }
 
     private void Update() 
     {
+        if (state != GameState.Playing) return;
+
         if (canSLow() && !_isBeginSlow)
         {
             _isBeginSlow = true;
@@ -59,6 +67,15 @@ public class GameManager : Singleton<GameManager>
                 state = GameState.WaveCompleted;
                 enemyLevel += enemyUpLevel;
                 _level++;
+
+                if(GUI.Ins)
+                {
+                    GUI.Ins.UpdateLevel(_level);
+                    if (GUI.Ins.waveCompeletedDialog)
+                    {
+                        GUI.Ins.waveCompeletedDialog.Show(true);
+                    }
+                }
                 Debug.Log("Yoy Thắng");              
             }
             else
@@ -69,7 +86,24 @@ public class GameManager : Singleton<GameManager>
                 state = GameState.Playing;
             }
         }
+
+        if(Time.timeScale >= 0.9f && _isSlowed && !canSLow() && _killed < _enemySpawned.Count && 
+            state != GameState.GameOver)
+        {
+            state = GameState.GameOver;
+
+            if(GUI.Ins && GUI.Ins.gameoverDialog)
+            {
+                GUI.Ins.gameoverDialog.Show(true);
+            }
+            _score = 0;
+
+            Debug.Log("Game Over!!!!!!");
+        }
+            
     }
+
+
 
     public void Spawn()
     {
@@ -97,6 +131,11 @@ public class GameManager : Singleton<GameManager>
                 _enemySpawned.Add(enemyClone);
             }
         }
+
+        if(GUI.Ins)
+        {
+            GUI.Ins.UpdateBullet(Player.Ins.Bullet);
+        }
     }
 
     public void ResetData()
@@ -104,7 +143,6 @@ public class GameManager : Singleton<GameManager>
         _isSlowed = false;
         _isBeginSlow = false;
         _killed = 0;
-        _enemySpawned.Clear();
 
         if (state == GameState.GameOver)
         {
@@ -113,6 +151,67 @@ public class GameManager : Singleton<GameManager>
         }
 
         state = GameState.Starting;
+
+        if (_enemySpawned == null || _enemySpawned.Count <= 0) return;
+
+        for (int i = 0; i < _enemySpawned.Count; i++)
+        {
+            var enemy = _enemySpawned[i];
+            if (enemy)
+            {
+                Destroy(enemy.gameObject);
+            }
+
+        }
+        _enemySpawned.Clear();
+
+    }
+
+    public void NextLevel()
+    {
+        if(state == GameState.WaveCompleted)
+        {
+            Timer.Schedule(this, 1f, () =>
+            {
+                _Wave = 1;
+                ResetData();
+                Spawn();
+                state = GameState.Playing;
+            });
+        }
+
+        if (AudioController.Ins)
+        {
+            AudioController.Ins.PlayBackgroundMusic();
+        }
+    }
+
+    public void StarGame()
+    {
+        ResetData();
+        Timer.Schedule(this, 1f, () =>
+        {
+            Spawn();
+            state= GameState.Playing;
+        });
+
+        if (GUI.Ins)
+        {
+            GUI.Ins.UpdateLevel(_level);
+            GUI.Ins.UpdateBullet(Player.Ins.Bullet);
+            GUI.Ins.ShowGamePlay(true);
+        }
+
+        if (AudioController.Ins)
+        {
+            AudioController.Ins.PlayBackgroundMusic();
+        }
+    }
+
+    public void AddScore()
+    {
+        _score++;
+        Pref.bestScore = _score;
     }
 
     private bool canSLow()
@@ -138,4 +237,5 @@ public class GameManager : Singleton<GameManager>
         return false;
 
     }
+    
 }

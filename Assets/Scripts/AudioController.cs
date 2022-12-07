@@ -15,8 +15,8 @@ public class AudioController : Singleton<AudioController>
     public AudioSource sfxAus;
 
     [Header("Game sounds and musics: ")]
-    public AudioClip winSound;
-    public AudioClip loseSound;
+    //public AudioClip winSound;
+    //public AudioClip loseSound;
     public AudioClip shootingSound;
     public AudioClip[] backgroundMusics;
 

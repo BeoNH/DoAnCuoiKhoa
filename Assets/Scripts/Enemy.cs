@@ -38,6 +38,10 @@ public class Enemy : MonoBehaviour
         _isDead=  true;
         Instantiate(deadPrefab, transform.position, Quaternion.identity);
         Destroy(gameObject);
-        GameManager.Ins.Killed++;
+        if (GameManager.Ins)
+        {
+            GameManager.Ins.Killed++;
+            GameManager.Ins.AddScore();
+        }
     }
 }
