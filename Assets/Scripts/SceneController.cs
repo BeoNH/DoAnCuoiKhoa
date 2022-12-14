@@ -11,5 +11,6 @@ public class SceneController : Singleton<SceneController>
     public void LoadCurrentScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        GameManager.Ins.state = GameState.Starting;
     }
 }

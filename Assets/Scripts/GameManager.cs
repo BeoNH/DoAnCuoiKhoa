@@ -47,28 +47,37 @@ public class GameManager : Singleton<GameManager>
 
     private void Update() 
     {
+        checkCanSlow();
+        checkGamePlay();
+    }
+
+    public void checkCanSlow()
+    {
         if (state != GameState.Playing) return;
 
         if (canSLow() && !_isBeginSlow)
         {
             _isBeginSlow = true;
-            float delay = Random.Range(0.01f , 0.05f);
-            Timer.Schedule(this, delay, () => 
+            float delay = Random.Range(0.01f, 0.05f);
+            Timer.Schedule(this, delay, () =>
             {
                 SlowController.Ins.DoSlowmotion();
             }, true);
         }
+    }    
 
-        if(Time.timeScale < 1 && _killed >= _enemySpawned.Count && state != GameState.WaveCompleted)
+    public void checkGamePlay()
+    {
+        if (Time.timeScale < 1 && _killed >= _enemySpawned.Count && state != GameState.WaveCompleted)
         {
             // tinh xem choi het cai wave trong 1 level chua
-            if(_Wave % waveLevel == 0)
+            if (_Wave % waveLevel == 0)
             {
                 state = GameState.WaveCompleted;
                 enemyLevel += enemyUpLevel;
                 _level++;
 
-                if(GUI.Ins)
+                if (GUI.Ins)
                 {
                     GUI.Ins.UpdateLevel(_level);
                     if (GUI.Ins.waveCompeletedDialog)
@@ -76,7 +85,7 @@ public class GameManager : Singleton<GameManager>
                         GUI.Ins.waveCompeletedDialog.Show(true);
                     }
                 }
-                Debug.Log("Yoy Thắng");              
+                Debug.Log("Yoy Thắng");
             }
             else
             {
@@ -87,12 +96,12 @@ public class GameManager : Singleton<GameManager>
             }
         }
 
-        if(Time.timeScale >= 0.9f && _isSlowed && !canSLow() && _killed < _enemySpawned.Count && 
+        if (Time.timeScale >= 0.9f && _isSlowed && !canSLow() && _killed < _enemySpawned.Count &&
             state != GameState.GameOver)
         {
             state = GameState.GameOver;
 
-            if(GUI.Ins && GUI.Ins.gameoverDialog)
+            if (GUI.Ins && GUI.Ins.gameoverDialog)
             {
                 GUI.Ins.gameoverDialog.Show(true);
             }
@@ -100,10 +109,7 @@ public class GameManager : Singleton<GameManager>
 
             Debug.Log("Game Over!!!!!!");
         }
-            
     }
-
-
 
     public void Spawn()
     {
@@ -146,6 +152,7 @@ public class GameManager : Singleton<GameManager>
 
         if (state == GameState.GameOver)
         {
+            enemyLevel = 3;
             _Wave = 1;
             _level = 1;
         }
@@ -186,10 +193,16 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void RestartWaveCompleted()
+    {
+        state= GameState.GameOver;
+        StarGame();
+    }
+
     public void StarGame()
     {
         ResetData();
-        Timer.Schedule(this, 1f, () =>
+        Timer.Schedule(this, 0.8f, () =>
         {
             Spawn();
             state= GameState.Playing;
