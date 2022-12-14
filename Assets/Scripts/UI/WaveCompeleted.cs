@@ -23,7 +23,7 @@ public class WaveCompeleted : Dialog
         Close();
         if(GameManager.Ins)
         {
-            GameManager.Ins.RestartWaveCompleted();
+            GameManager.Ins.RestartWaveCompeleted();
         }
     }
 

@@ -6,19 +6,19 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     public GameState state;
-    public  Camera cam;
-    public  bool isOnMobile;
+    public Camera cam;
+    public bool isOnMobile;
 
-    [SerializeField] private  Enemy[] enemiPbs;
-    [SerializeField] private  int waveLevel = 3;
-    [SerializeField] private  int enemyLevel = 3;
-    [SerializeField] private  int enemyUpLevel = 2;
-    [SerializeField] private  int bulletExtra = 1;
-    [SerializeField] private  float timeDownLevel = 0.0001f;
+    [SerializeField] private Enemy[] enemiPbs;
+    [SerializeField] private int waveLevel = 3;
+    [SerializeField] private int enemyLevel = 3;
+    [SerializeField] private int enemyUpLevel = 2;
+    [SerializeField] private int bulletExtra = 1;
+    [SerializeField] private float timeDownLevel = 0.0001f;
 
     private List<Enemy> _enemySpawned;
     private int _killed;
-    private int _level =1;
+    private int _level = 1;
     private int _Wave = 1;
     private int _score;
 
@@ -39,19 +39,13 @@ public class GameManager : Singleton<GameManager>
     {
         state = GameState.Starting;
 
-        if(AudioController.Ins)
+        if (AudioController.Ins)
         {
             AudioController.Ins.PlayBackgroundMusic();
         }
     }
 
-    private void Update() 
-    {
-        checkCanSlow();
-        checkGamePlay();
-    }
-
-    public void checkCanSlow()
+    private void Update()
     {
         if (state != GameState.Playing) return;
 
@@ -64,10 +58,7 @@ public class GameManager : Singleton<GameManager>
                 SlowController.Ins.DoSlowmotion();
             }, true);
         }
-    }    
 
-    public void checkGamePlay()
-    {
         if (Time.timeScale < 1 && _killed >= _enemySpawned.Count && state != GameState.WaveCompleted)
         {
             // tinh xem choi het cai wave trong 1 level chua
@@ -109,25 +100,28 @@ public class GameManager : Singleton<GameManager>
 
             Debug.Log("Game Over!!!!!!");
         }
+
     }
+
+
 
     public void Spawn()
     {
         if (!SlowController.Ins || !Player.Ins) return;
-                
-        SlowController.Ins.slowdownLength = (enemyLevel / 2 +1.5f) - timeDownLevel * _Wave;
+
+        SlowController.Ins.slowdownLength = (enemyLevel / 2 + 1.5f) - timeDownLevel * _Wave;
 
         Player.Ins.Bullet = enemyLevel + bulletExtra;
-        if(enemiPbs == null || enemiPbs.Length <=0) return;
+        if (enemiPbs == null || enemiPbs.Length <= 0) return;
 
         for (int i = 0; i < enemyLevel; i++)
         {
             int randIdx = Random.Range(0, enemiPbs.Length);
 
             var enemiPb = enemiPbs[randIdx];
-            
-            float spawnPosX = Random.Range(-8,8);
-            float spawnPosY = Random.Range(7f,8.5f);
+
+            float spawnPosX = Random.Range(-8, 8);
+            float spawnPosY = Random.Range(7f, 8.5f);
 
             Vector3 spawnPos = new Vector3(spawnPosX, spawnPosY, 0f);
 
@@ -138,7 +132,7 @@ public class GameManager : Singleton<GameManager>
             }
         }
 
-        if(GUI.Ins)
+        if (GUI.Ins)
         {
             GUI.Ins.UpdateBullet(Player.Ins.Bullet);
         }
@@ -176,7 +170,7 @@ public class GameManager : Singleton<GameManager>
 
     public void NextLevel()
     {
-        if(state == GameState.WaveCompleted)
+        if (state == GameState.WaveCompleted)
         {
             Timer.Schedule(this, 1f, () =>
             {
@@ -193,19 +187,19 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void RestartWaveCompleted()
+    public void RestartWaveCompeleted()
     {
-        state= GameState.GameOver;
+        state = GameState.GameOver;
         StarGame();
     }
 
     public void StarGame()
     {
         ResetData();
-        Timer.Schedule(this, 0.8f, () =>
+        Timer.Schedule(this, 1f, () =>
         {
             Spawn();
-            state= GameState.Playing;
+            state = GameState.Playing;
         });
 
         if (GUI.Ins)
@@ -229,7 +223,7 @@ public class GameManager : Singleton<GameManager>
 
     private bool canSLow()
     {
-        if(_enemySpawned == null || _enemySpawned.Count <=0) return false;
+        if (_enemySpawned == null || _enemySpawned.Count <= 0) return false;
 
         int check = 0;
 
@@ -239,16 +233,16 @@ public class GameManager : Singleton<GameManager>
 
             if (enemy && enemy.CanSlow)
             {
-                check ++;
+                check++;
             }
         }
 
-        if(check == _enemySpawned.Count)
+        if (check == _enemySpawned.Count)
         {
             return true;
         }
         return false;
 
     }
-    
+
 }
